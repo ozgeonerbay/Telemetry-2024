@@ -1,0 +1,48 @@
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  float sicaklik = random(0, 50);         // Rastgele sıcaklık değeri
+  int bataryaSeviyesi = random(0, 101);   // Rastgele batarya seviyesi
+  int hiz = random(0, 201);               // Rastgele hız değeri
+  
+  // Verileri seri port üzerinden gönderme
+  Serial.print("speed=");
+  Serial.print(hiz);
+  Serial.print("&voltage=");
+  Serial.print(random(10000, 20000)); // Rastgele gerilim değeri
+  Serial.print("&temp1=");
+  Serial.print(sicaklik);
+  Serial.print("&temp2=");
+  Serial.print(random(60, 100)); // Rastgele sıcaklık değeri
+  Serial.print("&cell1=");
+  Serial.print(random(4000, 5000)); // Rastgele hücre değeri
+  Serial.print("&cell2=");
+  Serial.print(random(4000, 5000)); // Rastgele hücre değeri
+  Serial.print("&cell3=");
+  Serial.print(random(4000, 5000)); // Rastgele hücre değeri
+  Serial.print("&cell4=");
+  Serial.print(random(0, 100)); // Rastgele hücre değeri
+  Serial.print("&cell5=");
+  Serial.print(random(0, 100)); // Rastgele hücre değeri
+  Serial.print("&cell6=");
+  Serial.print(random(0, 100)); // Rastgele hücre değeri
+  Serial.print("&cell7=");
+  Serial.print(random(0, 100)); // Rastgele hücre değeri
+  Serial.print("&cell8=");
+  Serial.print(random(0, 100)); // Rastgele hücre değeri
+  Serial.print("&cell9=");
+  Serial.print(random(0, 100)); // Rastgele hücre değeri
+  Serial.print("&cell10=");
+  Serial.print(random(0, 100)); // Rastgele hücre değeri
+  Serial.print("&cell11=");
+  Serial.print(random(0, 100)); // Rastgele hücre değeri
+  Serial.print("&cell12=");
+  Serial.print(random(9000, 10000)); // Rastgele hücre değeri
+  
+  Serial.println();
+  
+  delay(60000); //  60 saniye bekle
+}
+
