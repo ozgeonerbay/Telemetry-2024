@@ -1,0 +1,92 @@
+#include <GSM.h>
+
+#define PINNUMBER ""      // SIM kart PIN numarası, eğer varsa buraya girin
+#define GPRS_APN "internet" // GPRS APN ayarı
+#define GPRS_LOGIN ""  
+#define GPRS_PASSWORD ""  
+
+GSMClient client;
+GPRS gprs;
+GSM gsmAccess;
+
+const char* server = "37.148.210.150"; // Web sitemizin IP adresi veya domain adı
+const int port = 3000;
+const char* path = "/receive";  // Veri göndermek istediğiniz endpoint adresi
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Verici Arduino başlatılıyor...");
+  delay(2000);
+
+  // GSM bağlantısını başlat
+  while (!gsmAccess.begin(PINNUMBER)) {
+    Serial.println("GSM bağlantısı kurulamadı...");
+    delay(1000);
+  }
+
+  // GPRS bağlantısını başlat
+  while (gprs.attachGPRS(GPRS_APN, GPRS_LOGIN, GPRS_PASSWORD) != GPRS_READY) {
+    Serial.println("GPRS bağlantısı kurulamadı...");
+    delay(1000);
+  }
+
+  Serial.println("GPRS bağlantısı başarılı!");
+}
+
+void loop() {
+  // Veriyi hazırla
+  String receivedData = receiveDataFromTransmitter();
+  
+  // Eğer veri varsa, HTTP GET isteği gönder
+  if (receivedData.length() > 0) {
+    sendGetRequest(receivedData);
+  }
+  
+  delay(60000); // 1 dakika bekleyelim
+}
+
+String receiveDataFromTransmitter() {
+  String receivedData = "";
+  
+  // Seri porttan veri al
+  while (Serial.available() > 0) {
+    char c = Serial.read();
+    receivedData += c;
+    delay(10); // Küçük bir gecikme ekle, verinin tamamının alınmasını sağlamak için
+  }
+  
+  return receivedData;
+}
+
+void sendGetRequest(String data) {
+  if (client.connect(server, port)) {
+    Serial.println("Sunucuya bağlanıldı.");
+    
+    // GET isteği hazırla
+    client.print("GET ");
+    client.print(path);
+    client.print("?");
+    client.print(data);
+    client.println(" HTTP/1.1");
+    client.print("Host: ");
+    client.println(server);
+    client.println("Connection: close");
+    client.println();
+    
+    // Sunucudan yanıtı oku
+    while (client.connected()) {
+      if (client.available()) {
+        char c = client.read();
+        Serial.print(c);
+      }
+    }
+    
+    // Bağlantıyı kapat
+    client.stop();
+    Serial.println("Sunucu bağlantısı kapatıldı.");
+  } else {
+    Serial.println("Sunucuya bağlanılamadı...");
+  }
+}
+
+
